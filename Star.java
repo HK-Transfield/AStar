@@ -8,7 +8,6 @@ class Star {
         private Node parent;
         private double x, y;
 
-      
         public Node(Node parent, double x, double y) {
             this.parent = parent;
             this.x = x;
