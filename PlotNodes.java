@@ -94,7 +94,13 @@ public class PlotNodes extends Application {
         System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
 
         try {
-            File f = new File("spiral_v2.csv");
+            File f = new File(args[0]);
+
+            if(!f.exists()) {
+                System.out.println("Warning: Please enter a valid CSV file");
+                System.exit(0);
+            }
+
             BufferedReader br = new BufferedReader(new FileReader(f));
 
             line = br.readLine();
