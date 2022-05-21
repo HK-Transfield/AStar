@@ -13,6 +13,7 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 /**
@@ -44,53 +45,38 @@ public class PlotNodes extends Application {
         /*---------------------------------------------------------------------------*/
 
         // Creating the Scatter chart
-        final ScatterChart<Number, Number> scatterChart = new ScatterChart<>(xAxis, yAxis);
-        scatterChart.setId("AStar-chart");
-        scatterChart.setLegendVisible(false);
-        scatterChart.setAnimated(false);
-        scatterChart.getStylesheets().addAll(getClass().getResource("astar.css").toExternalForm());
-
-        // Prepare XYChart.Series objects by setting data
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
-
-        // add data from the CSV files
-        for (int i = 0; i < xCoords.size(); i++) {
-            series.getData().add(new XYChart.Data<>(xCoords.get(i), yCoords.get(i)));
-        }
-        // Setting the data to scatter chart
-        scatterChart.getData().add(series);
-
-        /*---------------------------------------------------------------------------*/
-
-        final LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        XYChart.Series<Number, Number> traversedSeries = new XYChart.Series<>();
+        final LineChart<Number, Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
         lineChart.setLegendVisible(false);
         lineChart.setAnimated(false);
         lineChart.setCreateSymbols(true);
         lineChart.setAlternativeRowFillVisible(false);
         lineChart.setAlternativeColumnFillVisible(false);
-        lineChart.setHorizontalGridLinesVisible(false);
-        lineChart.setVerticalGridLinesVisible(false);
         lineChart.getXAxis().setVisible(false);
         lineChart.getYAxis().setVisible(false);
-        lineChart.getStylesheets().addAll(getClass().getResource("astar.css").toExternalForm());
+
+        XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
+        for (int i = 0; i < xCoords.size(); i++) {
+            series.getData().add(new XYChart.Data<>(xCoords.get(i), yCoords.get(i)));
+        }
 
         // example data to test that it draws correctly
+        XYChart.Series<Number, Number> traversedSeries = new XYChart.Series<Number, Number>();
         traversedSeries.getData().add(new XYChart.Data<>(34.90, 13.05));
         traversedSeries.getData().add(new XYChart.Data<>(92.02, 22.29));
-        traversedSeries.getData().add(new XYChart.Data<>(9.67, 68.00));
+        traversedSeries.getData().add(new XYChart.Data<>(33.82, 10.20));
         traversedSeries.getData().add(new XYChart.Data<>(92.66, 27.09));
         traversedSeries.getData().add(new XYChart.Data<>(29.39, 46.94));
         traversedSeries.getData().add(new XYChart.Data<>(99.73, 33.70));
-        lineChart.getData().add(traversedSeries);
+        lineChart.getData().addAll(series, traversedSeries);
 
         /*---------------------------------------------------------------------------*/
 
-        StackPane root = new StackPane();
-        root.getChildren().addAll(scatterChart, lineChart);
+        Pane root = new Pane();
+        root.getChildren().add(lineChart);
 
         // Creating a scene object
         Scene scene = new Scene(root, 600, 400);
+        scene.getStylesheets().addAll(getClass().getResource("stylesheet.css").toExternalForm());
 
         // Setting title to the Stage
         stage.setTitle("A* Search Algorithm");
@@ -100,19 +86,12 @@ public class PlotNodes extends Application {
 
         // Displaying the contents of the stage
         stage.show();
-
-        Set<Node> nodes = scatterChart.lookupAll(".series" + 0);
-        for (Node n : nodes) {
-            n.setStyle("-fx-background-color: black, red;\n"
-                    + "    -fx-background-insets: 0, 2;\n"
-                    + "    -fx-background-radius: 5px;\n"
-                    + "    -fx-padding: 3px;");
-        }
     }
 
     public static void main(String args[]) {
         String line = "";
         String split = ",";
+        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
 
         try {
             File f = new File("spiral_v2.csv");
