@@ -10,10 +10,10 @@
             "request": "launch",
             "mainClass": "${file}",
             "args": [
-                "small_v2.csv",
-                "17",
-                "36",
-                "15",
+                "spiral_v2.csv",
+                "25",
+                "19",
+                "5",
             ]
         },
         {

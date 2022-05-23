@@ -31,8 +31,7 @@ public class Stars extends Application {
      * @param args
      */
     public static void main(String args[]) {
-        System.out.println("\nA* Algorithm");
-        System.out.println("---------------");
+        System.out.println("\nRunning: A* Algorithm");
         System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version") + "\n");
 
         if (args.length != 4) { // validate there are cli arguments
@@ -49,11 +48,6 @@ public class Stars extends Application {
         int startIndex = Integer.parseInt(args[1]);
         int endIndex = Integer.parseInt(args[2]);
         double distance = Double.parseDouble(args[3]);
-
-        if (startIndex == 0 || endIndex == 0) { // the cli arg should align with csv line number
-            System.out.println("Error: please enter an index greater than 0.");
-            System.exit(0);
-        }
 
         try {
             File f = new File(filename);
@@ -81,14 +75,15 @@ public class Stars extends Application {
             }
             br.close();
 
-            if (endIndex > lines.size() || startIndex > lines.size()) { // check for valid end index
-                System.out.println("Error: Index is greater than the number of lines in provided file\n");
+            if (endIndex == lines.size() || startIndex == lines.size()) { // check for valid end index
+                System.out.println(
+                        "Warning: Out of bounds index value. Choose a number between 0-"
+                                + (lines.size() - 1) + "\n");
                 System.exit(0);
             }
 
             // begin the A* algorithm
-            Search s = new Search(lines, startIndex, endIndex, distance);
-            _optimalRoute = s.startSearch();
+            _optimalRoute = Search.startSearch(lines, startIndex, endIndex, distance);
 
         } catch (Exception e) {
             e.printStackTrace();

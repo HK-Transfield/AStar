@@ -26,9 +26,8 @@ public class Node {
         // calculate euclidean distance
         double horizontalDistanceFromEnd = endX - x;
         double verticalDistanceFromEnd = endY - y;
-        this.distanceFromEndpoint = Math.sqrt(
-                (horizontalDistanceFromEnd * horizontalDistanceFromEnd) +
-                        (verticalDistanceFromEnd + verticalDistanceFromEnd));
+        this.distanceFromEndpoint = Math.sqrt(horizontalDistanceFromEnd * horizontalDistanceFromEnd
+                + verticalDistanceFromEnd * verticalDistanceFromEnd);
     }
 
     public void addTraversal(Node traversal) {
@@ -47,7 +46,7 @@ public class Node {
         return this.index;
     }
 
-    public ArrayList<Node> getHyperlanes() {
+    public ArrayList<Node> getTraversals() {
         return this.traversals;
     }
 

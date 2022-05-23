@@ -10,111 +10,13 @@ import java.util.Collections;
  */
 public class Search {
 
-    // declare class properties
-    private ArrayList<String> _lines;
-    private int _startIndex;
-    private int _endIndex;
-    private double _maxTraversalDistance;
-
-    // declare class scope variables
-    // private ArrayList<Node> map = new ArrayList<Node>();
-
-    /**
-     * Constructor. Instantiates a new Search.
-     */
-    public Search(ArrayList<String> lines, int startIndex, int endIndex, double maxTraversalDistance) {
-        _lines = lines;
-        _startIndex = startIndex - 1;
-        _endIndex = endIndex - 1;
-        _maxTraversalDistance = maxTraversalDistance;
-    }
-
-    /**
-     * Start point for A* algorithm.
-     * 
-     * @return An ArrayList of all traversed paths.
-     */
-    public ArrayList<Node> startSearch() {
-
-        ArrayList<Node> initMap = new ArrayList<Node>();
-
-        // prepare ArrayList for algorithm
-        setInitialNodes(_endIndex, initMap);
-        setTraversal(_maxTraversalDistance, initMap);
-
-        // run the A* search algorithm
-        Path path = findOptimalPath(_startIndex, initMap);
-
-        // retrieve final list of all visited nodes
-        ArrayList<Node> visited = path.getPath();
-
-        // Spit out the path
-        System.out.print("PATH FOUND: ");
-        for (int i = 0; i < visited.size(); i++) {
-            int visitedIndex = visited.get(i).getIndex() + 1;
-            System.out.print(visitedIndex + " -> ");
-        }
-        System.out.print("FINISHED\n");
-        return visited;
-    }
-
-    /**
-     * Generates all Nodes with coordinates and euclidean weights.
-     */
-    private void setInitialNodes(int endIndex, ArrayList<Node> initMap) {
-
-        // identify the end node
-        String endLine = _lines.get(endIndex);
-        double endX = Double.parseDouble(endLine.split(",")[0]);
-        double endY = Double.parseDouble(endLine.split(",")[1]);
-
-        for (int i = 0; i < _lines.size(); i++) { // create new nodes
-            String line = _lines.get(i);
-            double x = Double.parseDouble(line.split(",")[0]);
-            double y = Double.parseDouble(line.split(",")[1]);
-
-            Node newNode = new Node(x, y, endX, endY, i);
-            initMap.add(newNode);
-        }
-    }
-
-    /**
-     * Adds hyperlane between each valid pair of Nodes.
-     */
-    private void setTraversal(double maxTraversalDistance, ArrayList<Node> initMap) {
-        for (int i = 0; i < initMap.size(); i++) {
-            Node start = initMap.get(i);
-
-            for (int j = 0; j < initMap.size(); j++) {
-
-                if (i != j) {
-                    Node end = initMap.get(j);
-                    double dist = getTraversalDistance(start, end);
-
-                    if (dist <= maxTraversalDistance) {
-                        start.addTraversal(end);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Get the distance of the hyperlane between two stars.
-     */
-    private double getTraversalDistance(Node start, Node end) {
-        double horizontalDistance = start.getX() - end.getX();
-        double verticalDistance = start.getY() - end.getY();
-        return Math.sqrt(horizontalDistance * horizontalDistance + verticalDistance * verticalDistance);
-    }
-
-    /// A* Algorithm Code
+    /// Where the A* Algorithm Code is
     // -----------------------------------------------------------------
 
     /**
      * Performs the A* algorithmn.
      */
-    private Path findOptimalPath(int start, ArrayList<Node> initMap) {
+    private static Path findOptimalPath(int start, ArrayList<Node> initMap) {
         System.out.println("Starting search...");
 
         Node startNode = initMap.get(start);
@@ -142,12 +44,12 @@ public class Search {
     /**
      * Gets the index of the path in the stack with the lowest weight.
      */
-    private int getBestPathIndex(ArrayList<Path> stack) {
+    private static int getBestPathIndex(ArrayList<Path> stack) {
 
-        // if (stack.isEmpty()) { // no paths can be found
-        // System.out.println("No suitable path is found");
-        // System.exit(0);
-        // }
+        if (stack.isEmpty()) { // no paths can be found
+            System.out.println("No suitable path is found");
+            System.exit(0);
+        }
 
         Path nextPath = stack.get(0);
         int nextPathIndex = -1;
@@ -166,10 +68,10 @@ public class Search {
      * removes the original path.
      * 
      */
-    private void expandPath(int expansionIndex, ArrayList<Path> stack) {
+    private static void expandPath(int expansionIndex, ArrayList<Path> stack) {
 
         Path workingPath = stack.get(expansionIndex);
-        ArrayList<Node> nextStars = workingPath.getLastNode().getHyperlanes();
+        ArrayList<Node> nextStars = workingPath.getLastNode().getTraversals();
 
         for (int i = 0; i < nextStars.size(); i++) {
             // create a copy of the current star path
@@ -195,5 +97,85 @@ public class Search {
         Collections.reverse(stack);
     }
     // -----------------------------------------------------------------
+
+    /**
+     * Start point for A* algorithm.
+     * 
+     * @return An ArrayList of all traversed paths.
+     */
+    public static ArrayList<Node> startSearch(ArrayList<String> line, int startIndex, int endIndex,
+            double maxTraversalDistance) {
+
+        ArrayList<Node> initMap = new ArrayList<Node>();
+
+        // prepare ArrayList for algorithm
+        setInitialNodes(line, endIndex, initMap);
+        setTraversal(maxTraversalDistance, initMap);
+
+        // run the A* search algorithm
+        Path path = findOptimalPath(startIndex, initMap);
+
+        // retrieve final list of all visited nodes
+        ArrayList<Node> visited = path.getPath();
+
+        // Spit out the path
+        System.out.print("PATH FOUND: ");
+        for (int i = 0; i < visited.size(); i++) {
+            int visitedIndex = visited.get(i).getIndex();
+            System.out.print(visitedIndex + " -> ");
+        }
+        System.out.print("FINISHED\n");
+        return visited;
+    }
+
+    /**
+     * Generates all Nodes with coordinates and euclidean weights.
+     */
+    private static void setInitialNodes(ArrayList<String> lines, int endIndex, ArrayList<Node> initMap) {
+
+        // identify the end node
+        String endLine = lines.get(endIndex);
+        double endX = Double.parseDouble(endLine.split(",")[0]);
+        double endY = Double.parseDouble(endLine.split(",")[1]);
+
+        for (int i = 0; i < lines.size(); i++) { // create new nodes
+            String line = lines.get(i);
+            double x = Double.parseDouble(line.split(",")[0]);
+            double y = Double.parseDouble(line.split(",")[1]);
+
+            Node newNode = new Node(x, y, endX, endY, i);
+            initMap.add(newNode);
+        }
+    }
+
+    /**
+     * Adds hyperlane between each valid pair of Nodes.
+     */
+    private static void setTraversal(double maxTraversalDistance, ArrayList<Node> initMap) {
+        for (int i = 0; i < initMap.size(); i++) {
+            Node start = initMap.get(i);
+
+            for (int j = 0; j < initMap.size(); j++) {
+
+                if (i != j) {
+                    Node end = initMap.get(j);
+                    double dist = getTraversalDistance(start, end);
+
+                    if (dist <= maxTraversalDistance) {
+                        start.addTraversal(end);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the distance of the hyperlane between two stars.
+     */
+    private static double getTraversalDistance(Node start, Node end) {
+        double horizontalDistance = start.getX() - end.getX();
+        double verticalDistance = start.getY() - end.getY();
+        return Math.sqrt((horizontalDistance * horizontalDistance) + (verticalDistance * verticalDistance));
+    }
 
 }
