@@ -1,35 +1,29 @@
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Set;
-
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 
 /**
  * Opens a window to display a plot showing all the stars and will
  * also show the shortest path found.
+ * 
+ * @author Harmon Transfield (1317381), Edward Wang (1144995)
  */
-public class PlotNodes extends Application {
+public class Stars extends Application {
 
     /**
      * These store x and y coordinates from the CSV.
-     * * Since it is exepcted that the a* will return a set of
-     * * nodes it has visited, it should also be stored in
-     * * ArrayLists as well, which will be used to
      */
-    static ArrayList<Double> xCoords = new ArrayList<Double>();
-    static ArrayList<Double> yCoords = new ArrayList<Double>();
+    private static ArrayList<Double> _xCoords = new ArrayList<Double>();
+    private static ArrayList<Double> _yCoords = new ArrayList<Double>();
+    private static ArrayList<Node> _optimalRoute;
 
     /**
      * Main entry point for JavaFX applications.
@@ -55,18 +49,15 @@ public class PlotNodes extends Application {
         lineChart.getYAxis().setVisible(false);
 
         XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
-        for (int i = 0; i < xCoords.size(); i++) {
-            series.getData().add(new XYChart.Data<>(xCoords.get(i), yCoords.get(i)));
+        for (int i = 0; i < _xCoords.size(); i++) {
+            series.getData().add(new XYChart.Data<>(_xCoords.get(i), _yCoords.get(i)));
         }
 
         // example data to test that it draws correctly
         XYChart.Series<Number, Number> traversedSeries = new XYChart.Series<Number, Number>();
-        traversedSeries.getData().add(new XYChart.Data<>(34.90, 13.05));
-        traversedSeries.getData().add(new XYChart.Data<>(92.02, 22.29));
-        traversedSeries.getData().add(new XYChart.Data<>(33.82, 10.20));
-        traversedSeries.getData().add(new XYChart.Data<>(92.66, 27.09));
-        traversedSeries.getData().add(new XYChart.Data<>(29.39, 46.94));
-        traversedSeries.getData().add(new XYChart.Data<>(99.73, 33.70));
+        for (int i = 0; i < _optimalRoute.size(); i++) {
+            traversedSeries.getData().add(new XYChart.Data<>(_optimalRoute.get(i).getX(), _optimalRoute.get(i).getY()));
+        }
         lineChart.getData().addAll(series, traversedSeries);
 
         /*---------------------------------------------------------------------------*/
@@ -75,8 +66,8 @@ public class PlotNodes extends Application {
         root.getChildren().add(lineChart);
 
         // Creating a scene object
-        Scene scene = new Scene(root, 600, 400);
-        scene.getStylesheets().addAll(getClass().getResource("stylesheet.css").toExternalForm());
+        Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().addAll(getClass().getResource("styles/stylesheet.css").toExternalForm());
 
         // Setting title to the Stage
         stage.setTitle("A* Search Algorithm");
@@ -89,34 +80,65 @@ public class PlotNodes extends Application {
     }
 
     public static void main(String args[]) {
+        System.out.println("\nA* Algorithm");
+        System.out.println("---------------");
+        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version") + "\n");
+
+        if(args.length != 4) { // validate cli arguments
+            System.out.println("Usage: ./run_star.sh [galaxy_csv_filename] [start_index] [end_index] [D]\n");
+            System.exit(0);
+        }
+
         String line = "";
         String split = ",";
-        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
+        String filename = args[0];
+        int startIndex = Integer.parseInt(args[1]);
+        int endIndex = Integer.parseInt(args[2]);
+        double distance = Double.parseDouble(args[3]);
+
+        if(startIndex == 0) {
+            System.out.println("Error: please enter an index greater than 0.");
+        }
 
         try {
-            File f = new File(args[0]);
+            File f = new File(filename);
 
-            if(!f.exists()) {
-                System.out.println("Warning: Please enter a valid CSV file");
+            if(!f.exists()) { // ensure there is a csv file
+                System.out.println("Warning: Please enter a valid CSV file\n");
                 System.exit(0);
             }
 
             BufferedReader br = new BufferedReader(new FileReader(f));
+            ArrayList<String> lines = new ArrayList<String>();
 
             line = br.readLine();
-            while (line != null) {
+            lines.add(line);
+
+            while (line != null) { // obtain all XY coordinates
                 String[] coords = line.split(split);
 
-                xCoords.add(Double.valueOf(coords[0]));
-                yCoords.add(Double.valueOf(coords[1]));
+                _xCoords.add(Double.valueOf(coords[0]));
+                _yCoords.add(Double.valueOf(coords[1]));
 
                 line = br.readLine();
+                if(line != null)
+                    lines.add(line);
             }
             br.close();
+
+            if (endIndex > lines.size()) {
+                System.out.println("Error: End index is greater than the number of lines in provided file\n");
+                System.exit(0);
+            }
+
+            // begin the A* algorithm
+            Search s = new Search(lines, startIndex, endIndex, distance);
+            _optimalRoute = s.optimalRoute();
+
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
-        }
+        }  
 
         launch(args); // start JavaFX application
     }

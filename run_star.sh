@@ -1,4 +1,9 @@
 #!/bin/bash
-export PATH_TO_FX=lib/
+export PATH_TO_FX=lib/ # set classpath
 csv_file="$1"
-javac --module-path $PATH_TO_FX --add-modules javafx.controls PlotNodes.java && java --module-path $PATH_TO_FX --add-modules javafx.controls PlotNodes "$csv_file"
+start_index="$2"
+end_index="$3"
+d="$4"
+
+# compile and run program
+javac --module-path $PATH_TO_FX --add-modules javafx.controls *.java && java --module-path $PATH_TO_FX --add-modules javafx.controls Stars "./resources/$csv_file" "$start_index" "$end_index" "$d"

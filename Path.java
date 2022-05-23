@@ -1,15 +1,18 @@
 import java.util.ArrayList;
 
-public class starPath {
-    private ArrayList<star> path;
+/**
+ * @author Harmon Transfield (1317381), Edward Wang (1144995)
+ */
+public class Path {
+    private ArrayList<Node> path;
 
-    public starPath(star star){
-        this.path = new ArrayList<star>();
+    public Path(Node star){
+        this.path = new ArrayList<Node>();
         this.path.add(star);
     }
 
     public double getEuclidean(){
-        return getLastStar().getDistance();
+        return getLastNode().getDistance();
     }
 
     public double getPathLength(){
@@ -30,15 +33,15 @@ public class starPath {
         return getEuclidean() + getPathLength();
     }
 
-    public void addStar(star star){
-        this.path.add(star);
+    public void addNode(Node node){
+        this.path.add(node);
     }
 
-    public star getLastStar(){
+    public Node getLastNode(){
         return this.path.get(path.size()-1);
     }
 
-    public ArrayList<star> getPath(){
+    public ArrayList<Node> getPath(){
         return this.path;
     }
 
@@ -51,7 +54,7 @@ public class starPath {
     }
 
     // ugh, code duplication
-    private static double getHyperlaneDistance(star start, star end){
+    private static double getHyperlaneDistance(Node start, Node end){
         double horizontalDistance = start.getX() - end.getX();
         double verticalDistance = start.getY() - end.getY();
         return Math.sqrt(horizontalDistance * horizontalDistance + verticalDistance * verticalDistance);

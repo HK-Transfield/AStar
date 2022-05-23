@@ -1,23 +1,29 @@
 import java.util.ArrayList;
 
-public class star {
+/**
+ * @author Harmon Transfield (1317381), Edward Wang (1144995)
+ */
+public class Node {
     private double x;
     private double y;
-    private ArrayList<star> hyperlanes;
+    private ArrayList<Node> hyperlanes;
     private double distanceFromEndpoint;
     private int index;
 
-    public star(double x, double y, double endX, double endY, int index){
+    /**
+     * Constructor. Instatiates a new Node in the Graph.
+     */
+    public Node(double x, double y, double endX, double endY, int index){
         this.x = x;
         this.y = y;
         this.index = index;
         double horizontalDistanceFromEnd = endX - x;
         double verticalDistanceFromEnd = endY - y;
         this.distanceFromEndpoint = Math.sqrt(horizontalDistanceFromEnd * horizontalDistanceFromEnd + verticalDistanceFromEnd * verticalDistanceFromEnd);
-        this.hyperlanes = new ArrayList<star>();
+        this.hyperlanes = new ArrayList<Node>();
     } 
 
-    public void addHyperlane(star hyperlane){
+    public void addHyperlane(Node hyperlane){
         this.hyperlanes.add(hyperlane);
     }
 
@@ -33,7 +39,7 @@ public class star {
         return this.index;
     }
 
-    public ArrayList<star> getHyperlanes(){
+    public ArrayList<Node> getHyperlanes(){
         return this.hyperlanes;
     }
 
