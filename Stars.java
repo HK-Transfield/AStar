@@ -26,6 +26,79 @@ public class Stars extends Application {
     private static ArrayList<Node> _optimalRoute;
 
     /**
+     * Main entry point for the program.
+     * 
+     * @param args
+     */
+    public static void main(String args[]) {
+        System.out.println("\nA* Algorithm");
+        System.out.println("---------------");
+        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version") + "\n");
+
+        if(args.length != 4) { // validate there are cli arguments
+            System.out.println("Usage: ./run_star.sh [galaxy_csv_filename] [start_index] [end_index] [D]\n");
+            System.exit(1);
+        }
+
+        // declare variables
+        String line = "";
+        String split = ",";
+
+        // assign cli args
+        String filename = args[0];
+        int startIndex = Integer.parseInt(args[1]);
+        int endIndex = Integer.parseInt(args[2]);
+        double distance = Double.parseDouble(args[3]);
+
+        if(startIndex == 0 || endIndex == 0) { // for user convinience, the cli arg should align with the csv line number
+            System.out.println("Error: please enter an index greater than 0.");
+            System.exit(0);
+        }
+
+        try {
+            File f = new File(filename);
+
+            if(!f.exists()) { // ensure there is a valid csv file
+                System.out.println("Warning: Please enter a valid CSV file\n");
+                System.exit(0);
+            }
+
+            BufferedReader br = new BufferedReader(new FileReader(f));
+            ArrayList<String> lines = new ArrayList<String>();
+
+            line = br.readLine();
+            lines.add(line);
+
+            while (line != null) { // store all XY coordinates
+                String[] coords = line.split(split);
+
+                _xCoords.add(Double.valueOf(coords[0]));
+                _yCoords.add(Double.valueOf(coords[1]));
+
+                line = br.readLine();
+                if(line != null)
+                    lines.add(line);
+            }
+            br.close();
+
+            if (endIndex > lines.size() || startIndex > lines.size()) { // check for valid end index
+                System.out.println("Error: Index is greater than the number of lines in provided file\n");
+                System.exit(0);
+            }
+
+            // begin the A* algorithm
+            Search s = new Search(lines, startIndex, endIndex, distance);
+            _optimalRoute = s.optimalRoute();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getMessage());
+        }  
+
+        launch(args); // start JavaFX application
+    }
+
+    /**
      * Main entry point for JavaFX applications.
      * The plot for the A* star algorithm is drawn
      * using data retrieved from any CSV file.
@@ -78,69 +151,5 @@ public class Stars extends Application {
 
         // Displaying stage contents
         stage.show();
-    }
-
-    public static void main(String args[]) {
-        System.out.println("\nA* Algorithm");
-        System.out.println("---------------");
-        System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version") + "\n");
-
-        if(args.length != 4) { // validate cli arguments
-            System.out.println("Usage: ./run_star.sh [galaxy_csv_filename] [start_index] [end_index] [D]\n");
-            System.exit(1);
-        }
-
-        String line = "";
-        String split = ",";
-        String filename = args[0];
-        int startIndex = Integer.parseInt(args[1]);
-        int endIndex = Integer.parseInt(args[2]);
-        double distance = Double.parseDouble(args[3]);
-
-        if(startIndex == 0) {
-            System.out.println("Error: please enter an index greater than 0.");
-        }
-
-        try {
-            File f = new File(filename);
-
-            if(!f.exists()) { // ensure there is a valid csv file
-                System.out.println("Warning: Please enter a valid CSV file\n");
-                System.exit(0);
-            }
-
-            BufferedReader br = new BufferedReader(new FileReader(f));
-            ArrayList<String> lines = new ArrayList<String>();
-
-            line = br.readLine();
-            lines.add(line);
-
-            while (line != null) { // obtain all XY coordinates
-                String[] coords = line.split(split);
-
-                _xCoords.add(Double.valueOf(coords[0]));
-                _yCoords.add(Double.valueOf(coords[1]));
-
-                line = br.readLine();
-                if(line != null)
-                    lines.add(line);
-            }
-            br.close();
-
-            if (endIndex > lines.size()) {
-                System.out.println("Error: End index is greater than the number of lines in provided file\n");
-                System.exit(0);
-            }
-
-            // begin the A* algorithm
-            Search s = new Search(lines, startIndex, endIndex, distance);
-            _optimalRoute = s.optimalRoute();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }  
-
-        launch(args); // start JavaFX application
     }
 }
