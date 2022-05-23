@@ -48,12 +48,13 @@ public class Stars extends Application {
         lineChart.getXAxis().setVisible(false);
         lineChart.getYAxis().setVisible(false);
 
+        // plot all points from the csv file
         XYChart.Series<Number, Number> series = new XYChart.Series<Number, Number>();
         for (int i = 0; i < _xCoords.size(); i++) {
             series.getData().add(new XYChart.Data<>(_xCoords.get(i), _yCoords.get(i)));
         }
 
-        // example data to test that it draws correctly
+        // plot the route searched by the A* algorithm
         XYChart.Series<Number, Number> traversedSeries = new XYChart.Series<Number, Number>();
         for (int i = 0; i < _optimalRoute.size(); i++) {
             traversedSeries.getData().add(new XYChart.Data<>(_optimalRoute.get(i).getX(), _optimalRoute.get(i).getY()));
@@ -69,13 +70,13 @@ public class Stars extends Application {
         Scene scene = new Scene(root, 800, 600);
         scene.getStylesheets().addAll(getClass().getResource("styles/stylesheet.css").toExternalForm());
 
-        // Setting title to the Stage
+        // Setting Stage title
         stage.setTitle("A* Search Algorithm");
 
-        // Adding scene to the stage
+        // Adding Stage scene
         stage.setScene(scene);
 
-        // Displaying the contents of the stage
+        // Displaying stage contents
         stage.show();
     }
 

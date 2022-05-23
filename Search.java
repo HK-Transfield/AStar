@@ -41,7 +41,7 @@ public class Search {
         // Spit out the path
         System.out.println("PATH FOUND: ");
         for (int i = 0; i < stars.size(); i++){
-            int starIndex = stars.get(i).getIndex();
+            int starIndex = stars.get(i).getIndex() + 1;
             System.out.print(starIndex + " -> ");
         }
         System.out.print("FINISHED");
@@ -75,7 +75,7 @@ public class Search {
             double x = Double.parseDouble(rawStar.split(",")[0]);
             double y = Double.parseDouble(rawStar.split(",")[1]);
 
-            Node NewStar = new Node(x, y, endX, endY, ++i);
+            Node NewStar = new Node(x, y, endX, endY, i);
             galaxyMap.add(NewStar);
         }
     }
