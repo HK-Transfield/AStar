@@ -16,7 +16,7 @@ public class Search {
     private double _maxHyperlaneDistance;
 
     // declare
-    private ArrayList<Node> galaxyMap = new ArrayList<Node>();
+    private ArrayList<Node> map = new ArrayList<Node>();
 
     /**
      * Constructor. Instatiates a new Search
@@ -60,17 +60,17 @@ public class Search {
     private void generateInitialNodes(int endIndex){
         
         // identify the end node
-        String rawEndStar = _lines.get(endIndex);
-        double endX = Double.parseDouble(rawEndStar.split(",")[0]);
-        double endY = Double.parseDouble(rawEndStar.split(",")[1]);
+        String endLine = _lines.get(endIndex);
+        double endX = Double.parseDouble(endLine.split(",")[0]);
+        double endY = Double.parseDouble(endLine.split(",")[1]);
         
         for (int i = 0; i < _lines.size(); i++){
-            String rawStar = _lines.get(i);
-            double x = Double.parseDouble(rawStar.split(",")[0]);
-            double y = Double.parseDouble(rawStar.split(",")[1]);
+            String line = _lines.get(i);
+            double x = Double.parseDouble(line.split(",")[0]);
+            double y = Double.parseDouble(line.split(",")[1]);
 
-            Node NewStar = new Node(x, y, endX, endY, i);
-            galaxyMap.add(NewStar);
+            Node newNode = new Node(x, y, endX, endY, i);
+            map.add(newNode);
         }
     }
 
@@ -78,13 +78,13 @@ public class Search {
      * Adds hyperlane between each valid pair of Nodes.
      */
     private void generateHyperlanes(double maxHyperlaneDistance){
-        for (int i = 0; i < galaxyMap.size(); i++){
-            Node start = galaxyMap.get(i);
+        for (int i = 0; i < map.size(); i++){
+            Node start = map.get(i);
 
-            for (int j = 0; j < galaxyMap.size(); j++){
+            for (int j = 0; j < map.size(); j++){
 
                 if (i != j){
-                    Node end = galaxyMap.get(j);
+                    Node end = map.get(j);
                     double dist = getHyperlaneDistance(start, end);
 
                     if (dist <= maxHyperlaneDistance){
@@ -109,9 +109,9 @@ public class Search {
      */
     private Path generatePath(int start){
         System.out.println("Starting search...");
-        Node startStar = galaxyMap.get(start);
+        Node startStar = map.get(start);
 
-        // initializes stack by generating a starpath with one star - the start star
+        // initializes stack by generating a path with one node - the start node
         Path first = new Path(startStar);
         ArrayList<Path> stack = new ArrayList<Path>();
         stack.add(first);  
