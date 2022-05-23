@@ -27,8 +27,8 @@ public class Node {
         double horizontalDistanceFromEnd = endX - x;
         double verticalDistanceFromEnd = endY - y;
         this.distanceFromEndpoint = Math.sqrt(
-                Math.pow(horizontalDistanceFromEnd, 2) +
-                        Math.pow(verticalDistanceFromEnd, 2));
+                (horizontalDistanceFromEnd * horizontalDistanceFromEnd) +
+                        (verticalDistanceFromEnd + verticalDistanceFromEnd));
     }
 
     public void addTraversal(Node traversal) {

@@ -59,6 +59,6 @@ public class Path {
     private static double getTraversalDistance(Node start, Node end) {
         double horizontalDistance = start.getX() - end.getX();
         double verticalDistance = start.getY() - end.getY();
-        return Math.sqrt(Math.pow(horizontalDistance, 2) + Math.pow(verticalDistance, 2));
+        return Math.sqrt((horizontalDistance * horizontalDistance) + (verticalDistance * verticalDistance));
     }
 }
