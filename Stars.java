@@ -35,7 +35,7 @@ public class Stars extends Application {
         System.out.println("---------------");
         System.out.println("javafx.runtime.version: " + System.getProperty("javafx.runtime.version") + "\n");
 
-        if(args.length != 4) { // validate there are cli arguments
+        if (args.length != 4) { // validate there are cli arguments
             System.out.println("Usage: ./run_star.sh [galaxy_csv_filename] [start_index] [end_index] [D]\n");
             System.exit(1);
         }
@@ -50,7 +50,7 @@ public class Stars extends Application {
         int endIndex = Integer.parseInt(args[2]);
         double distance = Double.parseDouble(args[3]);
 
-        if(startIndex == 0 || endIndex == 0) { // for user convinience, the cli arg should align with the csv line number
+        if (startIndex == 0 || endIndex == 0) { // the cli arg should align with csv line number
             System.out.println("Error: please enter an index greater than 0.");
             System.exit(0);
         }
@@ -58,7 +58,7 @@ public class Stars extends Application {
         try {
             File f = new File(filename);
 
-            if(!f.exists()) { // ensure there is a valid csv file
+            if (!f.exists()) { // ensure there is a valid csv file
                 System.out.println("Warning: Please enter a valid CSV file\n");
                 System.exit(0);
             }
@@ -76,7 +76,7 @@ public class Stars extends Application {
                 _yCoords.add(Double.valueOf(coords[1]));
 
                 line = br.readLine();
-                if(line != null)
+                if (line != null)
                     lines.add(line);
             }
             br.close();
@@ -88,12 +88,12 @@ public class Stars extends Application {
 
             // begin the A* algorithm
             Search s = new Search(lines, startIndex, endIndex, distance);
-            _optimalRoute = s.optimalRoute();
+            _optimalRoute = s.startSearch();
 
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
-        }  
+        }
 
         launch(args); // start JavaFX application
     }
@@ -111,7 +111,7 @@ public class Stars extends Application {
 
         /*---------------------------------------------------------------------------*/
 
-        // Creating the Scatter chart
+        // Creating the line chart
         final LineChart<Number, Number> lineChart = new LineChart<Number, Number>(xAxis, yAxis);
         lineChart.setLegendVisible(false);
         lineChart.setAnimated(false);
@@ -132,6 +132,8 @@ public class Stars extends Application {
         for (int i = 0; i < _optimalRoute.size(); i++) {
             traversedSeries.getData().add(new XYChart.Data<>(_optimalRoute.get(i).getX(), _optimalRoute.get(i).getY()));
         }
+
+        // add data to the line chart
         lineChart.getData().addAll(series, traversedSeries);
 
         /*---------------------------------------------------------------------------*/
