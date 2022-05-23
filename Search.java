@@ -14,9 +14,10 @@ public class Search {
     private int _endIndex;
     private double _maxHyperlaneDistance;
 
+    private ArrayList<Node> galaxyMap = new ArrayList<Node>();
+
     /**
      * Constructor. Instatiates a new Search
-     * 
      */
     public Search(ArrayList<String> lines, int startIndex, int endIndex, double maxHyperlaneDistance) {
         _lines = lines;
@@ -31,11 +32,13 @@ public class Search {
      * @return An ArrayList of all traversed paths.
      */
     public ArrayList<Node> optimalRoute() {
-        // process the galaxy map
-        ArrayList<Node> galaxyMap = processGalaxyMap(_maxHyperlaneDistance, _endIndex);
+
+        // prepare ArrayList for algorithm
+        generateInitialNodes(_endIndex);
+        generateHyperlanes(_maxHyperlaneDistance);
 
         // run the A* search algorithm
-        Path path = generatePath(_startIndex, galaxyMap);
+        Path path = generatePath(_startIndex);
         ArrayList<Node> stars = path.getPath();
 
         // Spit out the path
@@ -44,26 +47,14 @@ public class Search {
             int starIndex = stars.get(i).getIndex() + 1;
             System.out.print(starIndex + " -> ");
         }
-        System.out.print("FINISHED");
+        System.out.print("FINISHED\n");
         return stars;
-    }
-
-    /**
-     * Converts the CSV file with all Nodes into an array of Nodes, 
-     * and generates hyperlanes between all Nodes
-     */
-    private ArrayList<Node> processGalaxyMap(double maxHyperlaneDistance, int endIndex) {
-
-        ArrayList<Node> galaxyMap = new ArrayList<Node>();
-        generateInitialNodes(endIndex, galaxyMap);
-        generateHyperlanes(maxHyperlaneDistance, galaxyMap);
-        return galaxyMap;
     }
 
     /**
      * Generates all Nodes with coordinates and euclidean weights. 
      */
-    private void generateInitialNodes(int endIndex, ArrayList<Node> galaxyMap){
+    private void generateInitialNodes(int endIndex){
         
         // identify the end node
         String rawEndStar = _lines.get(endIndex);
@@ -83,13 +74,16 @@ public class Search {
     /**
      * Adds hyperlane between each valid pair of Nodes.
      */
-    private void generateHyperlanes(double maxHyperlaneDistance, ArrayList<Node> galaxyMap){
+    private void generateHyperlanes(double maxHyperlaneDistance){
         for (int i = 0; i < galaxyMap.size(); i++){
             Node start = galaxyMap.get(i);
+
             for (int j = 0; j < galaxyMap.size(); j++){
+
                 if (i != j){
                     Node end = galaxyMap.get(j);
                     double dist = getHyperlaneDistance(start, end);
+
                     if (dist <= maxHyperlaneDistance){
                         start.addHyperlane(end);
                     }
@@ -110,7 +104,7 @@ public class Search {
     /**
      * Performs the A* algorithmn.
      */
-    private Path generatePath(int start, ArrayList<Node> galaxyMap){
+    private Path generatePath(int start){
         System.out.println("Starting search...");
         Node startStar = galaxyMap.get(start);
 
