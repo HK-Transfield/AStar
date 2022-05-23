@@ -67,7 +67,7 @@ public class Stars extends Application {
         root.getChildren().add(lineChart);
 
         // Creating a scene object
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 600, 400);
         scene.getStylesheets().addAll(getClass().getResource("styles/stylesheet.css").toExternalForm());
 
         // Setting Stage title
@@ -87,7 +87,7 @@ public class Stars extends Application {
 
         if(args.length != 4) { // validate cli arguments
             System.out.println("Usage: ./run_star.sh [galaxy_csv_filename] [start_index] [end_index] [D]\n");
-            System.exit(0);
+            System.exit(1);
         }
 
         String line = "";
@@ -104,7 +104,7 @@ public class Stars extends Application {
         try {
             File f = new File(filename);
 
-            if(!f.exists()) { // ensure there is a csv file
+            if(!f.exists()) { // ensure there is a valid csv file
                 System.out.println("Warning: Please enter a valid CSV file\n");
                 System.exit(0);
             }

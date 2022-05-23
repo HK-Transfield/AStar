@@ -3,6 +3,7 @@ import java.util.Collections;
 
 /**
  * Performs a A* Search algorithm.
+ * The actual algorithm occurs 
  * 
  * @author Harmon Transfield (1317381), Edward Wang (1144995)
  */
@@ -14,6 +15,7 @@ public class Search {
     private int _endIndex;
     private double _maxHyperlaneDistance;
 
+    // declare
     private ArrayList<Node> galaxyMap = new ArrayList<Node>();
 
     /**
@@ -39,6 +41,7 @@ public class Search {
 
         // run the A* search algorithm
         Path path = generatePath(_startIndex);
+
         ArrayList<Node> stars = path.getPath();
 
         // Spit out the path
@@ -114,8 +117,10 @@ public class Search {
         stack.add(first);  
 
         int nextIter = 0;
-        // disgusting boolean equality comparisons
+        
+        // boolean equality comparisons
         double currentDistance = stack.get(nextIter).getLastNode().getDistance();
+
         while (currentDistance > 0.0001){
            
             expandPath(nextIter, stack);
@@ -133,6 +138,12 @@ public class Search {
      * @return
      */
     private int getBestPathIndex(ArrayList<Path> stack){
+        
+        if (stack.isEmpty()) { // no paths can be found
+            System.out.println("No suitable path is found");
+            System.exit(0);
+        }   
+
         Path nextPath = stack.get(0);
         int nextPathIndex = -1;
         for (int i = 0; i < stack.size(); i++){
